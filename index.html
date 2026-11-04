@@ -1,0 +1,1408 @@
+
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Physics Battle | 1-курс</title>
+
+<style>
+:root {
+  --bg: #080e20;
+  --panel: #131e39;
+  --cyan: #49e4ef;
+  --purple: #a98aff;
+  --gold: #ffd36f;
+  --green: #5ee5ae;
+  --red: #ff758c;
+  --text: #f4f7ff;
+  --muted: #b6c4e0;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background:
+    radial-gradient(circle at 10% 10%, #17305b, transparent 42%),
+    radial-gradient(circle at 95% 45%, #291c52, transparent 45%),
+    var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+button, input { font: inherit; }
+
+button {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.container {
+  width: min(1100px, 94%);
+  margin: auto;
+}
+
+header {
+  padding: 20px 0;
+  border-bottom: 1px solid #ffffff20;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 23px;
+  font-weight: 900;
+  color: var(--cyan);
+}
+
+.date { color: var(--gold); }
+
+.page {
+  display: none;
+  animation: appear 0.35s ease;
+}
+
+.page.active { display: block; }
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  align-items: center;
+  gap: 30px;
+  min-height: 550px;
+}
+
+.tag {
+  color: var(--cyan);
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+h1 {
+  font-size: clamp(40px, 6vw, 76px);
+  line-height: 1.1;
+  margin: 18px 0;
+}
+
+h1 span { color: var(--cyan); }
+
+h2 { font-size: clamp(26px, 4vw, 40px); }
+
+p { line-height: 1.75; }
+
+.muted { color: var(--muted); }
+
+.hero p {
+  font-size: 19px;
+  color: var(--muted);
+}
+
+.atom {
+  min-height: 300px;
+  border-radius: 30px;
+  background: linear-gradient(145deg, #163a60, #27204d);
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #ffffff25;
+}
+
+.atom-core {
+  width: 120px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  color: #071329;
+  font-size: 58px;
+  font-weight: bold;
+  box-shadow: 0 0 80px #49e4ef50;
+}
+
+.orbit {
+  position: absolute;
+  width: 240px;
+  height: 110px;
+  border: 3px solid #83e9ff90;
+  border-radius: 50%;
+  animation: rotate 8s linear infinite;
+}
+
+.orbit.two {
+  transform: rotate(60deg);
+  animation: rotate2 10s linear infinite;
+}
+
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotate2 {
+  from { transform: rotate(60deg); }
+  to { transform: rotate(420deg); }
+}
+
+.btn {
+  padding: 15px 24px;
+  background: var(--cyan);
+  color: #07152a;
+  border: none;
+  border-radius: 14px;
+  font-weight: 800;
+  margin: 5px;
+}
+
+.btn.secondary {
+  background: #ffffff15;
+  color: white;
+  border: 1px solid #ffffff40;
+}
+
+.btn.gold { background: var(--gold); }
+.btn.green { background: var(--green); }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 25px 0 45px;
+}
+
+.card, .panel {
+  background: linear-gradient(145deg, #172643, #101a34);
+  border: 1px solid #ffffff25;
+  border-radius: 22px;
+  padding: 26px;
+}
+
+.card h3 { color: var(--cyan); }
+.card p { color: var(--muted); }
+
+.section-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 35px;
+}
+
+.progress {
+  background: #253452;
+  height: 10px;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+#progressFill {
+  height: 100%;
+  width: 10%;
+  background: linear-gradient(90deg, var(--cyan), var(--purple));
+  transition: 0.3s;
+}
+
+.lesson-panel {
+  min-height: 410px;
+  margin-top: 20px;
+}
+
+.lesson-content {
+  font-size: 19px;
+  line-height: 1.8;
+}
+
+.lesson-content ul { line-height: 2; }
+
+.formula {
+  display: inline-block;
+  padding: 15px 22px;
+  color: var(--cyan);
+  background: #12364a;
+  border: 1px solid #49e4ef70;
+  font-size: 30px;
+  font-weight: bold;
+  border-radius: 14px;
+  margin: 15px 0;
+}
+
+.note {
+  background: #ffd36f12;
+  border-left: 4px solid var(--gold);
+  padding: 17px;
+  margin-top: 25px;
+  border-radius: 10px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 20px 0 45px;
+}
+
+.lab {
+  background: #0b1932;
+  border: 1px solid #4a7492;
+  padding: 22px;
+  border-radius: 17px;
+  margin-top: 25px;
+}
+
+.lab input {
+  width: 100%;
+  accent-color: var(--cyan);
+}
+
+.lab-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.track {
+  height: 80px;
+  background: repeating-linear-gradient(
+    90deg, #19354c 0 30px, #22435a 30px 32px
+  );
+  border-radius: 15px;
+  margin-top: 22px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cart {
+  position: absolute;
+  top: 20px;
+  left: 15px;
+  width: 75px;
+  height: 35px;
+  background: linear-gradient(135deg, var(--cyan), var(--purple));
+  border-radius: 10px;
+  transition: transform 0.4s;
+}
+
+.setup-input {
+  padding: 15px;
+  width: 100%;
+  background: #09152b;
+  color: white;
+  border: 1px solid #546c91;
+  border-radius: 12px;
+}
+
+.team-form, .scoreboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.score {
+  background: #142442;
+  padding: 20px;
+  border-radius: 16px;
+  border: 2px solid #385171;
+  text-align: center;
+}
+
+.score.current {
+  border-color: var(--cyan);
+  box-shadow: 0 0 20px #49e4ef25;
+}
+
+.score strong {
+  display: block;
+  color: var(--gold);
+  font-size: 33px;
+  margin-top: 10px;
+}
+
+.quiz-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.timer {
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--cyan);
+}
+
+.timer.danger { color: var(--red); }
+
+.question {
+  font-size: clamp(22px, 4vw, 32px);
+  line-height: 1.4;
+  margin: 25px 0;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.option {
+  text-align: left;
+  padding: 19px;
+  background: #1a2c4d;
+  color: white;
+  border: 2px solid #405779;
+  border-radius: 14px;
+  font-size: 18px;
+}
+
+.option:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+
+.option.correct {
+  background: #174638;
+  border-color: var(--green);
+}
+
+.option.wrong {
+  background: #512739;
+  border-color: var(--red);
+}
+
+.option.gone { visibility: hidden; }
+
+.feedback {
+  margin-top: 20px;
+  padding: 18px;
+  background: #102c44;
+  border: 1px solid #547a95;
+  border-radius: 13px;
+  line-height: 1.6;
+}
+
+.hide { display: none !important; }
+
+.bonus-title { color: var(--gold); }
+
+.bonus-task {
+  font-size: 23px;
+  line-height: 1.7;
+  margin: 20px 0;
+}
+
+.bonus-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.result { text-align: center; }
+
+.result h1 { color: var(--gold); }
+
+.rank {
+  max-width: 600px;
+  margin: 12px auto;
+  padding: 18px;
+  background: #1a2a4b;
+  border: 1px solid #526888;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  margin-top: 45px;
+  color: var(--muted);
+  border-top: 1px solid #ffffff20;
+}
+
+footer b { color: var(--cyan); }
+
+@media (max-width: 750px) {
+  .hero { grid-template-columns: 1fr; padding-top: 45px; }
+  .atom { min-height: 230px; }
+  .cards, .team-form, .scoreboard { grid-template-columns: 1fr; }
+  .options, .lab-grid { grid-template-columns: 1fr; }
+  .lesson-content { font-size: 17px; }
+  .card, .panel { padding: 20px; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">⚛ PHYSICS BATTLE</div>
+  <div class="date">5 қараша 2026 • 1-курс</div>
+</header>
+
+<!-- БАСТЫ БЕТ -->
+<section id="home" class="page active">
+
+  <div class="hero">
+    <div>
+      <div class="tag">ИНТЕРАКТИВТІ ФИЗИКА САБАҒЫ</div>
+      <h1>ФИЗИКА <span>ӘЛЕМІНЕ</span> САЯХАТ</h1>
+      <p>
+        Ньютонның үш заңын үйренеміз,
+        физикалық тәжірибе жасаймыз
+        және үш топқа бөлініп,
+        қызықты ғылыми батл өткіземіз!
+      </p>
+
+      <button class="btn" onclick="openPage('lesson'); showLesson()">
+        📖 Сабақты бастау
+      </button>
+
+      <button class="btn secondary" onclick="openPage('setup')">
+        🏆 Ойынға өту
+      </button>
+    </div>
+
+    <div class="atom">
+      <div class="orbit"></div>
+      <div class="orbit two"></div>
+      <div class="atom-core">F</div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>📚 10 түсіндірме</h3>
+      <p>Ньютон заңдары, күш, үдеу, есептер және дәптерге ережелер.</p>
+    </div>
+
+    <div class="card">
+      <h3>⚡ Виртуалды тәжірибе</h3>
+      <p>Күш пен массаны өзгертіп, үдеудің қалай өзгеретінін бақыла.</p>
+    </div>
+
+    <div class="card">
+      <h3>🏆 3 топтық батл</h3>
+      <p>18 сұрақ, үш кезең, таймер, көмек және қосымша ұпай.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ТҮСІНДІРМЕ -->
+<section id="lesson" class="page">
+  <div class="section-top">
+    <div>
+      <div class="tag">ФИЗИКА • 1-КУРС</div>
+      <h2>Ньютон заңдары және күштер</h2>
+    </div>
+    <strong id="lessonCount">1 / 10</strong>
+  </div>
+
+  <div class="progress">
+    <div id="progressFill"></div>
+  </div>
+
+  <div class="panel lesson-panel">
+    <div class="tag" id="lessonTag"></div>
+    <h2 id="lessonTitle"></h2>
+    <div class="lesson-content" id="lessonBody"></div>
+    <div class="note">
+      📝 <b>Дәптерге жаз:</b>
+      <div id="lessonNote"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn secondary" onclick="previousLesson()">
+      ← Артқа
+    </button>
+    <button class="btn" id="lessonNext" onclick="nextLesson()">
+      Келесі тақырып →
+    </button>
+  </div>
+</section>
+
+<!-- ТОПТАР -->
+<section id="setup" class="page">
+  <div class="section-top">
+    <div>
+      <div class="tag">КОМАНДАЛЫҚ САЙЫС</div>
+      <h2>🏆 Physics Battle</h2>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Үш топты дайындау</h2>
+    <p class="muted">
+      Әр топ өзіне атау таңдайды.
+      Барлық топ кезекпен жауап береді.
+    </p>
+
+    <div class="team-form">
+      <div>
+        <h3>🔵 1-топ</h3>
+        <input class="setup-input" id="team1" value="Ньютон">
+      </div>
+      <div>
+        <h3>🟣 2-топ</h3>
+        <input class="setup-input" id="team2" value="Эйнштейн">
+      </div>
+      <div>
+        <h3>🟡 3-топ</h3>
+        <input class="setup-input" id="team3" value="Галилей">
+      </div>
+    </div>
+
+    <h3>🎮 Ойын ережесі</h3>
+    <p>
+      1-кезең — жеңіл сұрақтар, дұрыс жауапқа 10 ұпай.<br>
+      2-кезең — есептер, дұрыс жауапқа 20 ұпай.<br>
+      3-кезең — күрделі тапсырмалар, дұрыс жауапқа 30 ұпай.
+    </p>
+    <p>
+      Әр топта бір рет қолданылатын 50/50 көмегі бар.
+      Әр кезең соңында топтық миссия беріледі.
+      Мұғалім дұрыс орындалған миссия үшін 15 ұпай қосады.
+    </p>
+
+    <button class="btn gold" onclick="startGame()">
+      🚀 Батлды бастау
+    </button>
+    <button class="btn secondary" onclick="openPage('home')">
+      Басты бет
+    </button>
+  </div>
+</section>
+
+<!-- ОЙЫН -->
+<section id="quiz" class="page">
+  <div class="section-top">
+    <div>
+      <div class="tag">LIVE BATTLE</div>
+      <h2>Физикалық шайқас ⚡</h2>
+    </div>
+    <strong id="questionCounter"></strong>
+  </div>
+
+  <div class="scoreboard" id="scoreboard"></div>
+
+  <div class="panel" id="questionPanel">
+    <div class="quiz-info">
+      <div>
+        <b id="roundLabel" style="color:var(--gold)"></b>
+        <p id="currentTeam" class="muted"></p>
+      </div>
+      <div class="timer" id="timer">00:35</div>
+    </div>
+
+    <div class="progress">
+      <div id="gameProgress" style="
+        height:100%;
+        background:var(--cyan);
+        width:0%;
+        transition:0.3s;
+      "></div>
+    </div>
+
+    <h2 class="question" id="questionText"></h2>
+    <div class="options" id="options"></div>
+
+    <div class="feedback hide" id="feedback"></div>
+
+    <div class="controls">
+      <button class="btn secondary" id="helpButton" onclick="useHelp()">
+        💡 50/50 көмек
+      </button>
+
+      <button class="btn" onclick="nextQuestion()">
+        Келесі сұрақ →
+      </button>
+    </div>
+    <p class="muted">
+      Жауапты таңдағаннан кейін бірден келесі сұраққа өтуге болады.
+      Уақыттың бітуін күту міндетті емес.
+    </p>
+  </div>
+
+  <div class="panel hide" id="bonusPanel">
+    <div class="tag">КОМАНДАЛЫҚ МИССИЯ</div>
+    <h2 class="bonus-title" id="bonusTitle"></h2>
+
+    <p class="bonus-task" id="bonusText"></p>
+
+    <p class="muted">
+      Топтар ақылдасып жауап береді.
+      Мұғалім тапсырманы дұрыс орындаған
+      әр топқа 15 ұпай береді.
+    </p>
+
+    <div class="bonus-buttons" id="bonusButtons"></div>
+
+    <div class="controls">
+      <button class="btn gold" onclick="continueGame()">
+        Сайысты жалғастыру →
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- НӘТИЖЕ -->
+<section id="result" class="page">
+  <div class="panel result" style="margin-top:45px">
+    <div style="font-size:70px">🏆</div>
+    <div class="tag">PHYSICS BATTLE АЯҚТАЛДЫ</div>
+    <h1 id="winnerText"></h1>
+    <p class="muted">Барлық топтың қорытынды нәтижесі</p>
+    <div id="ranking"></div>
+
+    <button class="btn gold" onclick="openPage('setup')">
+      🔄 Қайта ойнау
+    </button>
+    <button class="btn secondary" onclick="openPage('home')">
+      Басты бет
+    </button>
+  </div>
+</section>
+
+<footer>
+  ⚛ PHYSICS BATTLE • 05.11.2026<br>
+  Created with science and creativity<br>
+  <b>By Darkhan</b>
+</footer>
+
+</div>
+
+<script>
+// ----------------------------
+// 1. ТҮСІНДІРМЕ БЕТТЕРІ
+// ----------------------------
+
+const lessons = [
+  {
+    tag: "01 • Кіріспе",
+    title: "Күш дегеніміз не?",
+    body: `
+      <p><b>Күш</b> — денелердің өзара әрекеттесуін
+      сипаттайтын физикалық шама.</p>
+      <p>Күш әсерінен дене жылдамдығын,
+      қозғалыс бағытын немесе пішінін өзгертуі мүмкін.</p>
+      <ul>
+        <li>Допты тепкенде ол қозғалады.</li>
+        <li>Есікті итергенде есік ашылады.</li>
+        <li>Серіппені созғанда пішіні өзгереді.</li>
+      </ul>
+      <div class="formula">F — күш</div>
+      <p>Күштің өлшем бірлігі — <b>ньютон (Н)</b>.</p>
+    `,
+    note: "Күш — денелердің өзара әрекеттесуін сипаттайтын шама. Белгісі F, өлшем бірлігі Н."
+  },
+  {
+    tag: "02 • Қозғалыс",
+    title: "Жылдамдық және үдеу",
+    body: `
+      <p><b>Жылдамдық</b> дененің қозғалыс шапшаңдығын
+      және бағытын сипаттайды.</p>
+      <p><b>Үдеу</b> — жылдамдықтың уақыт бойынша өзгеруі.</p>
+      <div class="formula">a = (v − v₀) / t</div>
+      <p>Мұнда v₀ — бастапқы жылдамдық,
+      v — соңғы жылдамдық, t — уақыт.</p>
+      <p><b>Мысал:</b> Көлік 0-ден 20 м/с жылдамдыққа
+      5 секундта жетті.</p>
+      <p>a = 20 / 5 = <b>4 м/с²</b>.</p>
+    `,
+    note: "Үдеу формуласы: a = (v − v₀)/t. Өлшем бірлігі: м/с²."
+  },
+  {
+    tag: "03 • Бірінші заң",
+    title: "Ньютонның I заңы — инерция",
+    body: `
+      <p>Егер денеге әсер ететін қорытқы күш
+      нөлге тең болса, дене тыныштықта қалады
+      немесе түзу сызық бойымен бірқалыпты қозғалады.</p>
+      <div class="formula">ΣF = 0 → a = 0</div>
+      <p>Бұл заң <b>инерция заңымен</b> байланысты.</p>
+      <p><b>Өмірдегі мысал:</b> Автобус кенет тежелгенде
+      жолаушы алға еңкейеді.</p>
+      <p>Себебі оның денесі бұрынғы қозғалыс
+      күйін сақтауға тырысады.</p>
+      <p>Қорытқы күш нөл болғанда жылдамдық
+      міндетті түрде нөл болмайды.</p>
+    `,
+    note: "I заң: ΣF = 0 болса, a = 0. Инерцияға өмірден 2 мысал жаз."
+  },
+  {
+    tag: "04 • Екінші заң",
+    title: "Ньютонның II заңы",
+    body: `
+      <p>Дененің үдеуі қорытқы күшке тура,
+      ал массасына кері пропорционал.</p>
+      <div class="formula">F = m × a</div>
+      <p>F — қорытқы күш (Н), m — масса (кг),
+      a — үдеу (м/с²).</p>
+      <p>Бірдей масса үшін күш артса, үдеу артады.
+      Бірдей күш үшін масса артса, үдеу кемиді.</p>
+
+      <div class="lab">
+        <h3>🔬 Виртуалды физика зертханасы</h3>
+        <p>Күш пен массаны өзгертіп көр.</p>
+        <div class="lab-grid">
+          <div>
+            <label>Күш: <b id="forceValue">20 Н</b></label>
+            <input id="forceSlider" type="range"
+              min="5" max="100" value="20"
+              oninput="updateLab()">
+          </div>
+          <div>
+            <label>Масса: <b id="massValue">5 кг</b></label>
+            <input id="massSlider" type="range"
+              min="1" max="20" value="5"
+              oninput="updateLab()">
+          </div>
+        </div>
+        <h3 id="labAnswer"></h3>
+        <div class="track"><div class="cart" id="cart"></div></div>
+      </div>
+    `,
+    note: "II заң: F = ma; a = F/m. Күш артқанда үдеу қалай өзгеретінін жаз."
+  },
+  {
+    tag: "05 • Есеп",
+    title: "Ньютонның II заңы бойынша есеп",
+    body: `
+      <p><b>1-есеп.</b> Массасы 3 кг арба
+      4 м/с² үдеумен қозғалады.</p>
+      <p>Оған әсер ететін қорытқы күшті тап.</p>
+      <div class="formula">F = 3 × 4 = 12 Н</div>
+      <p><b>2-есеп.</b> Массасы 5 кг денеге
+      20 Н қорытқы күш әсер етеді.</p>
+      <p>Үдеуін тап.</p>
+      <div class="formula">a = 20 / 5 = 4 м/с²</div>
+      <p>Есеп шығару реті: берілгені → формула →
+      есептеу → жауабы.</p>
+    `,
+    note: "Берілгені: m = 3 кг, a = 4 м/с². Шешуі: F = ma = 12 Н."
+  },
+  {
+    tag: "06 • Үшінші заң",
+    title: "Ньютонның III заңы",
+    body: `
+      <p>Бір дене екінші денеге күшпен әсер етсе,
+      екінші дене бірінші денеге модулі тең,
+      бағыты қарама-қарсы күшпен әсер етеді.</p>
+      <div class="formula">F₁₂ = −F₂₁</div>
+      <p><b>Мысалдар:</b></p>
+      <ul>
+        <li>Адам жерді артқа итереді, жер адамды алға итереді.</li>
+        <li>Жүзуші суды артқа итереді, су жүзушіні алға итереді.</li>
+        <li>Шардан ауа артқа шығып, шар алға қозғалады.</li>
+      </ul>
+      <p>Бұл екі күш <b>әртүрлі денелерге</b> әсер етеді.</p>
+    `,
+    note: "III заң: F₁₂ = −F₂₁. Өзара әсер күштері әртүрлі денелерге түседі."
+  },
+  {
+    tag: "07 • Күш түрлері",
+    title: "Ауырлық күші",
+    body: `
+      <p><b>Ауырлық күші</b> — Жердің денені
+      өзіне тарту күші.</p>
+      <div class="formula">Fауыр = mg</div>
+      <p>g ≈ 9,8 м/с². Кейбір оқу есептерінде
+      g = 10 м/с² деп алынады.</p>
+      <p><b>Мысал:</b> Массасы 5 кг дененің
+      ауырлық күшін есептейік.</p>
+      <div class="formula">F = 5 × 10 = 50 Н</div>
+      <p>Ауырлық күшінің бағыты Жердің орталығына қарай бағытталады.</p>
+    `,
+    note: "Ауырлық күші: Fауыр = mg. g ≈ 9,8 м/с²."
+  },
+  {
+    tag: "08 • Күш түрлері",
+    title: "Үйкеліс және қорытқы күш",
+    body: `
+      <p><b>Үйкеліс күші</b> жанасатын денелердің
+      салыстырмалы қозғалысына немесе
+      қозғалуына кедергі жасайды.</p>
+      <p>Үйкеліс болмаса, жүру және көлікті
+      тежеу әлдеқайда қиын болар еді.</p>
+      <p><b>Қорытқы күш</b> — барлық күштердің
+      векторлық қосындысы.</p>
+      <p>Арбаны 8 Н күшпен оңға,
+      3 Н күшпен солға тартсақ:</p>
+      <div class="formula">ΣF = 8 − 3 = 5 Н →</div>
+      <p>Қорытқы күш 5 Н, бағыты — оңға.</p>
+    `,
+    note: "Қарама-қарсы бағыттағы 8 Н және 3 Н күштердің қорытқысы: 5 Н оңға."
+  },
+  {
+    tag: "09 • Өмірдегі физика",
+    title: "Ньютон заңдары күнделікті өмірде",
+    body: `
+      <ul>
+        <li>🚗 <b>Қауіпсіздік белдігі:</b>
+        көлік тежелгенде жолаушының қозғалысын шектеуге көмектеседі.</li>
+        <li>🛒 <b>Арба:</b> бірдей күшпен итергенде,
+        массасы аз арбаның үдеуі үлкен болады.</li>
+        <li>🚀 <b>Зымыран:</b> газ артқа шығарылғанда,
+        зымыран алға бағытталған күш алады.</li>
+        <li>⚽ <b>Доп:</b> тебілген кезде күш
+        әсерінен жылдамдығы өзгереді.</li>
+      </ul>
+      <p>Ойланыңдар: осы мысалдардың әрқайсысы
+      Ньютонның қай заңымен байланысты?</p>
+    `,
+    note: "Ньютон заңдарына қатысты күнделікті өмірден 3 мысал жаз."
+  },
+  {
+    tag: "10 • Қайталау",
+    title: "Батлға дайындық!",
+    body: `
+      <p>Негізгі формулаларды қайталаймыз:</p>
+      <ul>
+        <li>I заң: ΣF = 0 → a = 0</li>
+        <li>II заң: F = ma</li>
+        <li>III заң: F₁₂ = −F₂₁</li>
+        <li>Ауырлық күші: Fауыр = mg</li>
+        <li>Үдеу: a = (v − v₀)/t</li>
+      </ul>
+      <h3>🎯 Ендігі міндет</h3>
+      <p>3 топқа бөлініңдер, топ атауын таңдап,
+      біліміңді ойын арқылы дәлелде!</p>
+      <p>Кезеңдер: теория → есептер → логикалық сұрақтар.</p>
+    `,
+    note: "Барлық формуланы қайтала. Енді үш топтық сайысқа дайындал!"
+  }
+];
+
+// ----------------------------
+// 2. ОЙЫН СҰРАҚТАРЫ
+// ----------------------------
+
+const questions = [
+  {
+    q: "Автобус кенет тежелгенде жолаушының алға еңкеюі қандай құбылыс?",
+    o: ["Үйкеліс", "Инерция", "Булану", "Магниттелу"],
+    a: 1,
+    why: "Бұл — инерция. Дене бұрынғы қозғалыс күйін сақтауға тырысады."
+  },
+  {
+    q: "Күштің өлшем бірлігі қандай?",
+    o: ["Ньютон", "Килограмм", "Секунд", "Метр"],
+    a: 0,
+    why: "Күш ньютонмен, яғни Н әрпімен белгіленетін бірлікпен өлшенеді."
+  },
+  {
+    q: "Ньютонның II заңының формуласы қайсы?",
+    o: ["v = s/t", "p = mv", "F = ma", "A = Fs"],
+    a: 2,
+    why: "Ньютонның II заңы: F = ma."
+  },
+  {
+    q: "Әрекет пен қарсы әрекетті түсіндіретін заң?",
+    o: ["I заң", "II заң", "III заң", "Архимед заңы"],
+    a: 2,
+    why: "Ньютонның III заңы екі дененің өзара әсерін сипаттайды."
+  },
+  {
+    q: "Үдеудің өлшем бірлігі қандай?",
+    o: ["Н", "кг", "м/с", "м/с²"],
+    a: 3,
+    why: "Үдеу м/с² өлшем бірлігімен өлшенеді."
+  },
+  {
+    q: "Қорытқы күш нөлге тең. Дененің үдеуі қандай?",
+    o: ["Артады", "Нөл", "Шексіз", "Міндетті түрде теріс"],
+    a: 1,
+    why: "Қорытқы күш нөл болса, үдеу де нөл."
+  },
+
+  {
+    q: "Массасы 2 кг дене 3 м/с² үдеумен қозғалады. Қорытқы күш?",
+    o: ["6 Н", "1,5 Н", "5 Н", "9 Н"],
+    a: 0,
+    why: "F = ma = 2 × 3 = 6 Н."
+  },
+  {
+    q: "20 Н қорытқы күш 4 кг денеге әсер етті. Үдеу қанша?",
+    o: ["80 м/с²", "16 м/с²", "5 м/с²", "0,2 м/с²"],
+    a: 2,
+    why: "a = F/m = 20/4 = 5 м/с²."
+  },
+  {
+    q: "Массасы 5 кг, үдеуі 2 м/с². Қорытқы күшті тап.",
+    o: ["2,5 Н", "10 Н", "7 Н", "20 Н"],
+    a: 1,
+    why: "F = 5 × 2 = 10 Н."
+  },
+  {
+    q: "Қорытқы күш 12 Н, үдеу 3 м/с². Масса қанша?",
+    o: ["36 кг", "9 кг", "15 кг", "4 кг"],
+    a: 3,
+    why: "m = F/a = 12/3 = 4 кг."
+  },
+  {
+    q: "Массасы 3 кг дененің ауырлық күші? g = 10 м/с²",
+    o: ["3 Н", "13 Н", "30 Н", "0,3 Н"],
+    a: 2,
+    why: "Fауыр = mg = 3 × 10 = 30 Н."
+  },
+  {
+    q: "8 Н оңға, 3 Н солға әсер етеді. Қорытқы күш?",
+    o: ["5 Н оңға", "11 Н солға", "24 Н", "5 Н солға"],
+    a: 0,
+    why: "8 − 3 = 5 Н, бағыты оңға."
+  },
+
+  {
+    q: "Жылдамдық 0-ден 12 м/с-қа 4 секундта өзгерді. Үдеу?",
+    o: ["48 м/с²", "3 м/с²", "8 м/с²", "16 м/с²"],
+    a: 1,
+    why: "a = (12 − 0)/4 = 3 м/с²."
+  },
+  {
+    q: "Адам жүргенде Ньютонның III заңы қалай байқалады?",
+    o: [
+      "Күш мүлде әсер етпейді",
+      "Масса жоғалады",
+      "Аяқ жерді артқа, жер адамды алға итереді",
+      "Жер тек төмен тартады"
+    ],
+    a: 2,
+    why: "Аяқ пен жер бір-біріне тең, қарама-қарсы күштермен әсер етеді."
+  },
+  {
+    q: "Бірдей 8 Н күш 2 кг және 4 кг денеге әсер етеді. Қайсысының үдеуі үлкен?",
+    o: ["2 кг", "4 кг", "Екеуі бірдей", "Ешқайсысы"],
+    a: 0,
+    why: "a = F/m. Массасы аз дененің үдеуі үлкен."
+  },
+  {
+    q: "Зымыран не себепті алға қозғалады?",
+    o: [
+      "Оны тек ауа итереді",
+      "Газ артқа шығып, зымыран алға күш алады",
+      "Зымыран массасыз",
+      "Күш болмайды"
+    ],
+    a: 1,
+    why: "Газ бен зымыранның өзара әсері Ньютонның III заңымен түсіндіріледі."
+  },
+  {
+    q: "10 Н оңға және 10 Н солға әсер етеді. Қорытқы күш?",
+    o: ["20 Н", "10 Н", "100 Н", "0 Н"],
+    a: 3,
+    why: "Қарама-қарсы тең күштердің векторлық қосындысы нөл."
+  },
+  {
+    q: "Дене түзу бойымен 6 м/с тұрақты жылдамдықпен қозғалады. Қорытқы күш нөл болса, 3 секундтан кейін жылдамдығы қандай?",
+    o: ["0 м/с", "18 м/с", "3 м/с", "6 м/с"],
+    a: 3,
+    why: "Үдеу нөл, сондықтан жылдамдық өзгермейді."
+  }
+];
+
+const missions = [
+  "Әр топ инерцияға қатысты екі мысал айтып, олардың біреуін Ньютонның I заңы арқылы түсіндірсін.",
+  "Арбаға 12 Н оңға, 5 Н солға күш әсер етеді. Қорытқы күшті есептеп, бағытын түсіндіріңдер.",
+  "Ньютонның III заңына екі мысал келтіріп, әр мысалда өзара әсерлесетін екі денені атаңдар."
+];
+
+// ----------------------------
+// 3. НЕГІЗГІ БАҒДАРЛАМА
+// ----------------------------
+
+const $ = id => document.getElementById(id);
+
+let lessonIndex = 0;
+let teams = ["Ньютон", "Эйнштейн", "Галилей"];
+let scores = [0, 0, 0];
+let helps = [false, false, false];
+let questionIndex = 0;
+let locked = false;
+let clock = null;
+let seconds = 35;
+let awarded = [false, false, false];
+
+function openPage(id) {
+  clearInterval(clock);
+  document.querySelectorAll(".page").forEach(p => {
+    p.classList.remove("active");
+  });
+  $(id).classList.add("active");
+  window.scrollTo(0, 0);
+}
+
+// ----------------------------
+// 4. ТҮСІНДІРМЕ НАВИГАЦИЯСЫ
+// ----------------------------
+
+function showLesson() {
+  const s = lessons[lessonIndex];
+
+  $("lessonCount").textContent =
+    (lessonIndex + 1) + " / " + lessons.length;
+
+  $("lessonTag").textContent = s.tag;
+  $("lessonTitle").textContent = s.title;
+  $("lessonBody").innerHTML = s.body;
+  $("lessonNote").textContent = s.note;
+
+  $("progressFill").style.width =
+    ((lessonIndex + 1) / lessons.length * 100) + "%";
+
+  $("lessonNext").textContent =
+    lessonIndex === lessons.length - 1
+      ? "🏆 Ойынға өту"
+      : "Келесі тақырып →";
+
+  if (lessonIndex === 3) updateLab();
+  window.scrollTo(0, 0);
+}
+
+function nextLesson() {
+  if (lessonIndex < lessons.length - 1) {
+    lessonIndex++;
+    showLesson();
+  } else {
+    openPage("setup");
+  }
+}
+
+function previousLesson() {
+  if (lessonIndex > 0) {
+    lessonIndex--;
+    showLesson();
+  } else {
+    openPage("home");
+  }
+}
+
+function updateLab() {
+  const forceInput = $("forceSlider");
+  const massInput = $("massSlider");
+  if (!forceInput || !massInput) return;
+
+  const force = Number(forceInput.value);
+  const mass = Number(massInput.value);
+  const a = force / mass;
+
+  $("forceValue").textContent = force + " Н";
+  $("massValue").textContent = mass + " кг";
+  $("labAnswer").textContent =
+    "Үдеу: " + a.toFixed(2) + " м/с²";
+
+  $("cart").style.transform =
+    "translateX(" + Math.min(a * 15, 210) + "px)";
+}
+
+// ----------------------------
+// 5. ОЙЫНДЫ БАСТАУ
+// ----------------------------
+
+function startGame() {
+  teams = [
+    $("team1").value.trim() || "1-топ",
+    $("team2").value.trim() || "2-топ",
+    $("team3").value.trim() || "3-топ"
+  ];
+
+  scores = [0, 0, 0];
+  helps = [false, false, false];
+  questionIndex = 0;
+  locked = false;
+
+  openPage("quiz");
+  showQuestion();
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[ch]));
+}
+
+function updateScores() {
+  const current = questionIndex % 3;
+
+  $("scoreboard").innerHTML = teams.map((name, i) => `
+    <div class="score ${i === current ? "current" : ""}">
+      <div>${["🔵", "🟣", "🟡"][i]} ${escapeHtml(name)}</div>
+      <strong>${scores[i]}</strong>
+      <small>ҰПАЙ</small>
+    </div>
+  `).join("");
+}
+
+function showQuestion() {
+  if (questionIndex >= questions.length) {
+    finishGame();
+    return;
+  }
+
+  clearInterval(clock);
+  locked = false;
+
+  $("questionPanel").classList.remove("hide");
+  $("bonusPanel").classList.add("hide");
+  $("feedback").classList.add("hide");
+
+  const q = questions[questionIndex];
+  const round = Math.floor(questionIndex / 6);
+  const team = questionIndex % 3;
+  const points = [10, 20, 30][round];
+
+  $("roundLabel").textContent =
+    ["1-КЕЗЕҢ • БІЛІМ", "2-КЕЗЕҢ • ЕСЕП", "3-КЕЗЕҢ • ЛОГИКА"][round]
+    + " • " + points + " ҰПАЙ";
+
+  $("currentTeam").textContent =
+    "Кезек: " + teams[team];
+
+  $("questionCounter").textContent =
+    (questionIndex + 1) + " / 18";
+
+  $("questionText").textContent = q.q;
+
+  $("gameProgress").style.width =
+    ((questionIndex + 1) / questions.length * 100) + "%";
+
+  $("options").innerHTML = "";
+
+  q.o.forEach((answer, i) => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.textContent = ["A", "B", "C", "D"][i] + ". " + answer;
+    btn.onclick = () => chooseAnswer(i);
+    $("options").appendChild(btn);
+  });
+
+  $("helpButton").disabled = helps[team];
+
+  updateScores();
+  startTimer();
+  window.scrollTo(0, 0);
+}
+
+// ----------------------------
+// 6. ТАЙМЕР
+// ----------------------------
+
+function startTimer() {
+  seconds = 35;
+  updateTimer();
+
+  clock = setInterval(() => {
+    seconds--;
+    updateTimer();
+
+    if (seconds <= 0) {
+      clearInterval(clock);
+      if (!locked) {
+        locked = true;
+        revealCorrect();
+        $("feedback").classList.remove("hide");
+        $("feedback").textContent =
+          "⏰ Уақыт аяқталды! " +
+          questions[questionIndex].why;
+      }
+    }
+  }, 1000);
+}
+
+function updateTimer() {
+  $("timer").textContent =
+    "00:" + String(seconds).padStart(2, "0");
+
+  $("timer").classList.toggle("danger", seconds <= 10);
+}
+
+// ----------------------------
+// 7. ЖАУАПТЫ ТЕКСЕРУ
+// ----------------------------
+
+function revealCorrect(selected = -1) {
+  const q = questions[questionIndex];
+
+  [...$("options").children].forEach((btn, i) => {
+    btn.disabled = true;
+
+    if (i === q.a) btn.classList.add("correct");
+    else if (i === selected) btn.classList.add("wrong");
+  });
+}
+
+function chooseAnswer(selected) {
+  if (locked) return;
+
+  locked = true;
+  clearInterval(clock);
+
+  const q = questions[questionIndex];
+  const team = questionIndex % 3;
+  const round = Math.floor(questionIndex / 6);
+  const points = [10, 20, 30][round];
+  const correct = selected === q.a;
+
+  if (correct) scores[team] += points;
+
+  revealCorrect(selected);
+  updateScores();
+
+  $("feedback").classList.remove("hide");
+
+  $("feedback").innerHTML = correct
+    ? "<b>✅ Дұрыс жауап! +" + points + " ұпай</b>" + q.why
+    : "<b>❌ Қате жауап!</b>" + q.why;
+}
+
+// ----------------------------
+// 8. 50/50 КӨМЕК
+// ----------------------------
+
+function useHelp() {
+  if (locked) return;
+
+  const team = questionIndex % 3;
+  if (helps[team]) return;
+
+  helps[team] = true;
+  $("helpButton").disabled = true;
+
+  const correct = questions[questionIndex].a;
+  const wrongIndices = [0, 1, 2, 3]
+    .filter(i => i !== correct);
+
+  wrongIndices.slice(0, 2).forEach(i => {
+    $("options").children[i].classList.add("gone");
+    $("options").children[i].disabled = true;
+  });
+}
+
+// ----------------------------
+// 9. КЕЛЕСІ СҰРАҚ
+// ----------------------------
+
+function nextQuestion() {
+  clearInterval(clock);
+  if (questionIndex >= questions.length) return;
+
+  questionIndex++;
+
+  if (questionIndex % 6 === 0) {
+    showMission();
+  } else {
+    showQuestion();
+  }
+}
+
+// ----------------------------
+// 10. ҚОСЫМША ТОПТЫҚ МИССИЯ
+// ----------------------------
+
+function showMission() {
+  $("questionPanel").classList.add("hide");
+  $("bonusPanel").classList.remove("hide");
+
+  const missionNumber = questionIndex / 6 - 1;
+  awarded = [false, false, false];
+
+  $("bonusTitle").textContent =
+    (missionNumber + 1) + "-МИССИЯ • +15 ҰПАЙ";
+
+  $("bonusText").textContent = missions[missionNumber];
+
+  $("bonusButtons").innerHTML = "";
+
+  teams.forEach((name, i) => {
+    const btn = document.createElement("button");
+    btn.className = "btn secondary";
+    btn.textContent = "✅ " + name + " +15";
+
+    btn.onclick = () => {
+      if (awarded[i]) return;
+      awarded[i] = true;
+      scores[i] += 15;
+      btn.disabled = true;
+      btn.textContent = "✓ " + name + " +15";
+      updateScores();
+    };
+
+    $("bonusButtons").appendChild(btn);
+  });
+
+  updateScores();
+  window.scrollTo(0, 0);
+}
+
+function continueGame() {
+  if (questionIndex >= questions.length) {
+    finishGame();
+  } else {
+    showQuestion();
+  }
+}
+
+// ----------------------------
+// 11. ЖЕҢІМПАЗДЫ АНЫҚТАУ
+// ----------------------------
+
+function finishGame() {
+  clearInterval(clock);
+
+  const maxScore = Math.max(...scores);
+  const winners = teams.filter((name, i) => scores[i] === maxScore);
+
+  $("winnerText").textContent =
+    winners.length === 1
+      ? "Жеңімпаз: " + winners[0] + "!"
+      : "Тең нәтиже! 🏆";
+
+  const ranking = teams.map((name, i) => ({
+    name,
+    score: scores[i]
+  })).sort((a, b) => b.score - a.score);
+
+  $("ranking").innerHTML = ranking.map((team, i) => `
+    <div class="rank">
+      <span>${["🥇", "🥈", "🥉"][i]} ${escapeHtml(team.name)}</span>
+      <strong>${team.score} ұпай</strong>
+    </div>
+  `).join("");
+
+  openPage("result");
+}
+
+// Бастапқы түсіндірмені дайындау
+showLesson();
+</script>
+
+</body>
+</html>
